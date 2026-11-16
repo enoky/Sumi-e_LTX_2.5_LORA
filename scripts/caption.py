@@ -68,7 +68,7 @@ def vlm_captions(paths: list[Path], hints: list[str], model_id: str, batch: int,
     from transformers import AutoModelForImageTextToText, AutoProcessor
 
     model = AutoModelForImageTextToText.from_pretrained(
-        model_id, torch_dtype=torch.bfloat16, device_map="cuda"
+        model_id, dtype=torch.bfloat16, device_map="cuda"
     ).eval()
     proc = AutoProcessor.from_pretrained(model_id, min_pixels=256 * 28 * 28, max_pixels=768 * 28 * 28)
     proc.tokenizer.padding_side = "left"

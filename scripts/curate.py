@@ -34,7 +34,7 @@ def embed(paths: list[Path], model_id: str, batch: int) -> np.ndarray:
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dtype = torch.float16 if device == "cuda" else torch.float32
-    model = CLIPModel.from_pretrained(model_id, torch_dtype=dtype).to(device).eval()
+    model = CLIPModel.from_pretrained(model_id, dtype=dtype).to(device).eval()
     proc = CLIPProcessor.from_pretrained(model_id)
 
     feats = []
@@ -42,7 +42,10 @@ def embed(paths: list[Path], model_id: str, batch: int) -> np.ndarray:
         for i in range(0, len(paths), batch):
             imgs = [Image.open(p).convert("RGB") for p in paths[i:i + batch]]
             inputs = proc(images=imgs, return_tensors="pt").to(device)
-            f = model.get_image_features(pixel_values=inputs["pixel_values"].to(dtype))
+            # vision tower -> pooled output -> projection. Equivalent to get_image_features(), whose return type
+            # changed from a tensor to a ModelOutput in newer transformers releases.
+            pooled = model.vision_model(pixel_values=inputs["pixel_values"].to(dtype)).pooler_output
+            f = model.visual_projection(pooled)
             f = torch.nn.functional.normalize(f.float(), dim=-1)
             feats.append(f.cpu().numpy())
             print(f"  embedded {min(i + batch, len(paths))}/{len(paths)}", end="\r")
