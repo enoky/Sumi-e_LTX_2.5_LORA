@@ -37,6 +37,8 @@ notebook explains the three setup steps (A100/H100 runtime, accept the LTX-2.5 t
 - **`CUDA ok: False` after `uv sync`:** the trainer pins a CUDA 13 build of PyTorch. If Colab's driver is older (see
   `nvidia-smi`), the GPU won't be visible to the trainer environment. Try an H100 runtime, which usually has a newer
   driver.
+- **`ValueError: Key backend: 'module://matplotlib_inline.backend_inline'`:** Colab's `MPLBACKEND` leaks into the
+  trainer's `uv` env. Prefix trainer commands with `MPLBACKEND=Agg` (the notebook does this).
 - **Out of memory on A100 40GB:** lower `--resolution` to 768, or `--rank` to 16.
 - **401/403 when downloading models:** accept the terms on the LTX-2.5 model page and check that `HF_TOKEN` is a Read token.
 
