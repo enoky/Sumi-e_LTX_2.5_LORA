@@ -19,6 +19,7 @@ notebook explains the three setup steps (A100/H100 runtime, accept the LTX-2.5 t
 | Caption | `scripts/caption.py` | `--mode vlm`: Qwen2.5-VL writes prose captions (framing, subject, brushwork). `--mode prompt`: cleans the SD prompts, no GPU needed. Writes `dataset.json`. |
 | Config | `scripts/make_config.py` | Trainer YAML: single-frame 1024² bucket, video-branch-only LoRA (rank 32), no audio, trigger `sumi-e ink painting,`. Picks int8 + 8-bit AdamW on A100 40GB, bf16 on 80GB cards. |
 | Train | LTX-2 `scripts/preprocess.py` then `scripts/train.py` | Uses the **dev** transformer. Writes validation videos every 500 steps and checkpoints every 250 steps. |
+| Test | `scripts/test_lora.py` | Renders the same prompts and seed on the base model and with the LoRA (any checkpoints and strengths), and writes an `index.html` side-by-side grid. Runs in the LTX-2 `uv` env. |
 
 ## Design notes
 
