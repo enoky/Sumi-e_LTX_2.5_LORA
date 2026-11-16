@@ -22,8 +22,14 @@ import argparse
 import gc
 import html
 import json
+import os
 import re
 import time
+
+# Colab exports MPLBACKEND=module://matplotlib_inline..., which the LTX uv env can't load; ltx_core imports
+# matplotlib indirectly (via colour-science), so pick a headless backend before anything imports it.
+if os.environ.get("MPLBACKEND", "").startswith("module://"):
+    os.environ["MPLBACKEND"] = "Agg"
 from dataclasses import replace
 from pathlib import Path
 
